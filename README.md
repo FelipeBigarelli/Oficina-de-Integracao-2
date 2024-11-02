@@ -17,7 +17,7 @@ Para melhor organização do projeto, será utilizada a arquitetura em camadas, 
 
 Abaixo mostra como o projeto terá sua arquitetura inicial:
   - **Backend:**
-  ![Backend](/Images/Arquitetura%20Backend.png)
+    - ![Backend](/Images/Arquitetura%20Backend.png)
     - **src:** pasta que irá conter todo o código principal do projeto
     - **config:** pasta que terão arquivos de configuração como por exemplo autenticação ou upload de arquivos
     - **modules:** pasta que irá conter todas as entidades da aplicação, juntamente com seus repositórios, funcionalidades, casos de uso e configuração destas para o banco de dados
