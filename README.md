@@ -8,6 +8,9 @@
  ### TEMÁTICA
  Registro da presença dos alunos que participam das oficinas de ensino do projeto ELLP (Ensino Lúdico de Lógica, Programação e Robótica).
 
+ ### ORGANIZAÇÃO E PLANEJAMENTO
+ https://www.notion.so/135961c60bf780dfa52ee78aebdab0f3?v=135961c60bf781b4873e000c478595b4&pvs=4
+
 ## VISÃO GERAL
 
 O projeto tem como objetivo centralizar e facilitar o acompanhamento das crianças e adolescentes que participam das oficinas de ensino do projeto ELLP (Ensino Lúdico de Lógica, Programação e Robótica). O sistema visa criar um processo automatizado e preciso para o controle de presença, substituindo métodos manuais e potencialmente falhos por uma solução digital eficiente.
