@@ -6,7 +6,7 @@
  Rafael Gonçalves Martins - Felipe Bigarelli Dantas da Costa
  
  ### TEMÁTICA
- Registro de voluntarios e workshops das oficinas de ensino do projeto ELLP (Ensino Lúdico de Lógica, Programação e Robótica).
+ Registro de voluntarios e workshops das oficinas de ensino do projeto ELLP (Ensino Lúdico de Lógica, Programação e Robótica)
 
  ### ORGANIZAÇÃO E PLANEJAMENTO
  https://www.notion.so/135961c60bf780dfa52ee78aebdab0f3?v=135961c60bf781b4873e000c478595b4&pvs=4
