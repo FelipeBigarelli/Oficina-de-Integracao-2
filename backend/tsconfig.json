@@ -7,13 +7,13 @@
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
-    // "paths": {
-    //   "@modules/*": ["modules/*"],
-    //   "@config/*": ["config/*"],
-    //   "@shared/*": ["shared/*"],
-    //   "@errors/*": ["errors/*"],
-    //   "@utils/*": ["utils/*"],
-    // },
+    "paths": {
+      "@modules/*": ["modules/*"],
+      "@config/*": ["config/*"],
+      "@shared/*": ["shared/*"],
+      "@errors/*": ["errors/*"],
+      "@utils/*": ["utils/*"]
+    },
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
