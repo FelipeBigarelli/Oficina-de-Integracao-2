@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "cypress:web": "npx cypress open",
+    "test": "npx cypress open",
     "cypress:headless": "npx cypress run --browser chrome"
   },
   "dependencies": {
