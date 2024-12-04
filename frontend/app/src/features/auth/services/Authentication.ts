@@ -1,3 +1,5 @@
+
+
 // Tipos (Interfaces)
 interface LoginRequest {
     email: string;
@@ -8,6 +10,14 @@ interface LoginRequest {
     token: string;
     isDocente: boolean;
   }
+
+  interface User {
+    id: string;
+    name: string;
+    email: string;
+    is_admin: boolean;
+  }
+  
   
   // URL base da API
   const API_URL = 'http://localhost:3333';
@@ -42,9 +52,7 @@ interface LoginRequest {
   export async function login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${API_URL}/sessions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
   
@@ -53,7 +61,13 @@ interface LoginRequest {
       throw new Error(error.message || 'Erro no login');
     }
   
-    return response.json();
+    const data = await response.json();
+    
+    // Armazene o token e os dados do usuário
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user)); // Salva os dados do usuário
+  
+    return data;
   }
   
   /**
@@ -61,7 +75,9 @@ interface LoginRequest {
    */
   export function logout(): void {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
   }
+  
   
   /**
    * Função para verificar o status de autenticação
@@ -69,5 +85,13 @@ interface LoginRequest {
    */
   export function isAuthenticated(): boolean {
     const token = localStorage.getItem('authToken');
-    return !!token; // Retorna true se houver um token armazenado
+    const user = localStorage.getItem('user');
+    return !!token && !!user; // Certifica-se de que ambos existem
   }
+
+  export function getUser(): User | null {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  }
+  
+  

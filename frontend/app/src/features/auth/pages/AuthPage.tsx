@@ -1,46 +1,55 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form } from "../components/Form";
-import { login , signUp } from "../handlers/Authentication";
+import { login , signUp } from "../services/Authentication";
 
 
-export const Auth = () => {
+export function AuthPage() {
     const [isLogin, setIsLogin] = useState(true); // Alterna entre login e cadastro
     const navigate = useNavigate();
   
     const handleSignUp = async (data: Record<string, string>) => {
       try {
-        // Envie os dados de forma correta
         await signUp({
           name: data.name,
           email: data.email,
           RA: data.ra,
-          password: data.password
+          password: data.password,
         });
-
+    
         console.log(data);
-        alert('Conta criada com sucesso! Faça login para continuar.');
-        setIsLogin(true);
+        setIsLogin(true); // Alterna para a tela de login após o sucesso
       } catch (err: any) {
-        throw new Error(err.message);
+        if (err.message.includes("Failed to fetch")) {
+          throw new Error("Erro de conexão: Não foi possível alcançar o servidor.");
+        } else {
+          throw new Error(`Erro ao criar conta: ${err.message}`);
+        }
       }
     };
     
-
     const handleLogin = async (data: Record<string, string>) => {
       try {
-        const response = await login({ email: data.email, password: data.password });
+        const response = await login({
+          email: data.email,
+          password: data.password,
+        });
         localStorage.setItem("authToken", response.token);
-  
+    
         if (response.isDocente) {
           navigate("/docente");
         } else {
           navigate("/voluntario");
         }
       } catch (err: any) {
-        throw new Error(err.message); // Repassa o erro para o componente Form
+        if (err.message.includes("Failed to fetch")) {
+          throw new Error("Erro de conexão: Não foi possível alcançar o servidor.");
+        } else {
+          throw new Error(`Erro no login: ${err.message}`);
+        }
       }
     };
+    
   
     return (
       <div className="w-full h-screen flex">
