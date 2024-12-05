@@ -12,6 +12,8 @@ const AuthRoute: React.FunctionComponent<IAuthRouteProps> = ({ children }) => {
     useEffect(() => {
         if (!isAuthenticated()) {
             navigate('/auth'); // Redireciona para a página de login se não estiver autenticado
+        } else {
+            navigate('/');
         }
     }, [navigate]);
 
