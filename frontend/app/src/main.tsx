@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Router>
       <Routes>
         <Route path="/" element={<AuthRoute> <App></App> </AuthRoute>} />
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth" element={<AuthRoute> <AuthPage/> </AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
