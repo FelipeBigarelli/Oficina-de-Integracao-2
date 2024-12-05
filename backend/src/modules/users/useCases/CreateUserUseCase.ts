@@ -1,6 +1,7 @@
 import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
 
+import { AppError } from '../../../errors/AppError';
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO';
 import { User } from '../entities/User';
 import { IUsersRepository } from '../repositories/IUsersRepository';
@@ -16,11 +17,11 @@ class CreateUserUseCase {
     const userAlreadyExists = await this.usersRepository.findByRA(RA);
 
     if (userAlreadyExists) {
-      throw new Error('User already exists');
+      throw new AppError('User already exists', 403);
     }
 
     if (!email || !RA || !password) {
-      throw new Error('Missing fields, check again');
+      throw new AppError('Missing fields, check again', 400);
     }
 
     const passwordHash = await hash(password, 8);

@@ -10,9 +10,11 @@
     "paths": {
       "@modules/*": ["modules/*"],
       "@config/*": ["config/*"],
-      "@shared/*": ["shared/*"],
+      "@database/*": ["database/*"],
       "@errors/*": ["errors/*"],
-      "@utils/*": ["utils/*"]
+      "@middlewares/*": ["middlewares/*"],
+      "@container/*": ["container/*"],
+      "@routes/*": ["routes/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
