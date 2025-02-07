@@ -13,9 +13,9 @@ class UsersRepository implements IUsersRepository {
     RA,
     password,
     id,
-    is_admin,
   }: ICreateUserDTO): Promise<User> {
     const user = new User();
+    const isAdmin = RA.startsWith('p');
 
     Object.assign(user, {
       id: id || uuid(),
@@ -23,7 +23,7 @@ class UsersRepository implements IUsersRepository {
       email,
       RA,
       password,
-      is_admin,
+      is_admin: isAdmin,
     });
 
     console.log(user.id);
@@ -35,6 +35,16 @@ class UsersRepository implements IUsersRepository {
 
   async findByRA(RA: string): Promise<User | undefined> {
     const findUser = this.users.find((user) => user.RA === RA);
+
+    return findUser;
+  }
+
+  async list(): Promise<User[]> {
+    return this.users;
+  }
+
+  async findById(id: string): Promise<User | undefined> {
+    const findUser = this.users.find((user) => user.id === id);
 
     return findUser;
   }

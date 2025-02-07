@@ -1,0 +1,79 @@
+import { hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import request from 'supertest';
+import { v4 as uuid } from 'uuid';
+
+import { app } from '../../app';
+import auth from '../../config/auth';
+import { IUsersRepository } from '../../modules/users/repositories/IUsersRepository';
+import { UsersRepository } from '../../modules/users/repositories/UsersRepository';
+
+let usersRepository: IUsersRepository;
+
+describe('List Users', () => {
+  beforeEach(async () => {
+    usersRepository = new UsersRepository();
+
+    // Criar um usuário administrador no banco em memória
+    const adminPassword = await hash('admin123', 8);
+    await usersRepository.create({
+      id: uuid(),
+      name: 'Admin User',
+      email: 'admin@example.com',
+      password: adminPassword,
+      RA: 'p123456',
+      is_admin: true,
+    });
+
+    // Criar um usuário comum
+    const userPassword = await hash('user123', 8);
+    await usersRepository.create({
+      id: uuid(),
+      name: 'Common User',
+      email: 'user@example.com',
+      password: userPassword,
+      RA: 'a123456',
+      is_admin: false,
+    });
+  });
+
+  it('should allow an authenticated admin user to list all users', async () => {
+    // Gerar token para o administrador
+    const adminUser = await usersRepository.findByEmail('admin@example.com');
+    const token = sign({}, auth.secret_token, {
+      subject: adminUser.id,
+      expiresIn: auth.expires_in_token,
+    });
+
+    const response = await request(app)
+      .get('/users')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2); // Deve conter 2 usuários
+    expect(response.body[0]).toHaveProperty('id');
+  });
+
+  it('should not allow a non-admin user to list users', async () => {
+    // Gerar token para o usuário comum
+    const commonUser = await usersRepository.findByEmail('user@example.com');
+    const token = sign({}, auth.secret_token, {
+      subject: commonUser.id,
+      expiresIn: auth.expires_in_token,
+    });
+
+    const response = await request(app)
+      .get('/users')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe("User isn't admin");
+  });
+
+  it('should not allow access without authentication', async () => {
+    const response = await request(app).get('/users');
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Token missing');
+  });
+});
