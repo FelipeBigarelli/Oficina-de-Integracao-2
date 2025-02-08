@@ -1,97 +1,116 @@
-
-
-// Tipos (Interfaces)
 interface LoginRequest {
-    email: string;
-    password: string;
-  }
-  
-  interface LoginResponse {
-    token: string;
-    isDocente: boolean;
-  }
+  email: string;
+  password: string;
+}
 
-  interface User {
-    id: string;
-    name: string;
-    email: string;
-    is_admin: boolean;
-  }
-  
-  
-  // URL base da API
-  const API_URL = 'http://localhost:3333';
-  
-  /**
-   * Função para criar uma nova conta
-   * @param {Record<string, string>} userData - Dados do usuário para criar a conta
-   */
-  export async function signUp(userData: Record<string, string>): Promise<void> {
-    
-    console.log(userData)
-    
-    const response = await fetch(`${API_URL}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
+interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  is_admin: boolean;
+}
+
+// Constantes
+const API_URL = "http://localhost:3333";
+const TOKEN_KEY = "authToken";
+const USER_KEY = "user";
+
+// Utilitário para requisições autenticadas
+export const api = {
+  async fetch(endpoint: string, options: RequestInit = {}) {
+    const token = storage.getToken();
+
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    };
+
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
     });
-    
+
+    // Se recebemos um 401, limpa o storage e redireciona para login
+    if (response.status === 401) {
+      storage.clear();
+      window.location.href = "/auth";
+      throw new Error("Sessão expirada");
+    }
+
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Erro ao criar conta');
+      throw new Error(error.message || "Erro na requisição");
     }
-  }
 
-  /**
-   * Função para fazer login
-   * @param {LoginRequest} credentials - Credenciais de login (email e senha)
-   * @returns {Promise<LoginResponse>} Resposta contendo o token e o tipo de usuário
-   */
-  export async function login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await fetch(`${API_URL}/sessions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-  
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erro no login');
-    }
-  
-    const data = await response.json();
-    
-    // Armazene o token e os dados do usuário
-    localStorage.setItem("authToken", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user)); // Salva os dados do usuário
-  
-    return data;
-  }
-  
-  /**
-   * Função para logout
-   */
-  export function logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-  }
-  
-  
-  /**
-   * Função para verificar o status de autenticação
-   * @returns {boolean} Indica se o usuário está autenticado
-   */
-  export function isAuthenticated(): boolean {
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
-    return !!token && !!user; // Certifica-se de que ambos existem
-  }
+    return response;
+  },
+};
 
-  export function getUser(): User | null {
-    const user = localStorage.getItem("user");
+// Gerenciamento do storage
+const storage = {
+  setToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
+  },
+
+  setUser(user: User): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  },
+
+  getToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
+  },
+
+  getUser(): User | null {
+    const user = localStorage.getItem(USER_KEY);
     return user ? JSON.parse(user) : null;
-  }
-  
-  
+  },
+
+  clear(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  },
+};
+
+export async function signUp(userData: Record<string, string>): Promise<void> {
+  await api.fetch("/users", {
+    method: "POST",
+    body: JSON.stringify(userData),
+  });
+}
+
+export async function login(credentials: LoginRequest): Promise<LoginResponse> {
+  const response = await api.fetch("/sessions", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
+
+  const data = await response.json();
+
+  storage.setToken(data.token);
+  storage.setUser(data.user);
+
+  return data;
+}
+
+export function logout(): void {
+  storage.clear();
+  window.location.href = "/auth";
+}
+
+export function isAuthenticated(): boolean {
+  return !!storage.getToken() && !!storage.getUser();
+}
+
+export function getUser(): User | null {
+  return storage.getUser();
+}
+
+export function getToken(): string | null {
+  return storage.getToken();
+}
