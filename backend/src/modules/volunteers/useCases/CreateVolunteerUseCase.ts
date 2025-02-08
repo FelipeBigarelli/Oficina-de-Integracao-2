@@ -1,6 +1,6 @@
-import { AppError } from '@errors/AppError';
 import { inject, injectable } from 'tsyringe';
 
+import { AppError } from '../../../errors/AppError';
 import { IUsersRepository } from '../../users/repositories/IUsersRepository';
 import { ICreateVolunteerDTO } from '../dtos/ICreateVolunteerDTO';
 import { Volunteer } from '../entities/Volunteer';
@@ -16,13 +16,11 @@ class CreateVolunteerUseCase {
   ) {}
 
   async execute({
-    name,
-    RA,
+    user_id,
     start_date,
     end_date,
     status,
     certificate_url,
-    user_id,
   }: ICreateVolunteerDTO): Promise<Volunteer> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -30,7 +28,7 @@ class CreateVolunteerUseCase {
       throw new AppError('User not found', 404);
     }
 
-    const { name: user_name, RA: user_RA } = user;
+    const { name, RA } = user;
 
     const volunteer = await this.volunteersRepository.create({
       name,
