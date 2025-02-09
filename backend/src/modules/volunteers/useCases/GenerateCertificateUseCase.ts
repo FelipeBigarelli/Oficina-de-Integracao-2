@@ -4,75 +4,135 @@ import PDFDocument from 'pdfkit';
 import { inject, injectable } from 'tsyringe';
 
 import { AppError } from '../../../errors/AppError';
+import { IUsersRepository } from '../../users/repositories/IUsersRepository';
+import { IWorkshopsRepository } from '../../workshops/repositories/IWorkshopsRepository';
 import { IVolunteersRepository } from '../repositories/IVolunteersRepository';
+
+interface IRequest {
+  user_id: string;
+  workshop_id: string;
+}
 
 @injectable()
 class GenerateCertificateUseCase {
   constructor(
     @inject('VolunteersRepository')
-    private volunteersRepository: IVolunteersRepository
+    private volunteersRepository: IVolunteersRepository,
+
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+
+    @inject('WorkshopsRepository')
+    private workshopsRepository: IWorkshopsRepository
   ) {}
 
-  async execute(volunteer_id: string): Promise<string> {
-    // 🔹 1. Buscar o voluntário pelo ID
-    const volunteer = await this.volunteersRepository.findById(volunteer_id);
+  async execute({ user_id, workshop_id }: IRequest): Promise<string> {
+    const volunteer = await this.volunteersRepository.findByUserAndWorkshop(
+      user_id,
+      workshop_id
+    );
 
     if (!volunteer) {
-      throw new AppError('Voluntário não encontrado', 404);
+      throw new AppError('Usuário não é voluntário neste workshop.', 404);
     }
 
-    // 🔹 2. Calcular tempo total de voluntariado
-    const start = new Date(volunteer.start_date);
-    const end = volunteer.end_date ? new Date(volunteer.end_date) : new Date();
+    const user = await this.usersRepository.findById(user_id);
+    const workshop = await this.workshopsRepository.findById(workshop_id);
 
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const diffMonths = Math.floor(diffDays / 30);
+    if (!user || !workshop) {
+      throw new AppError('Usuário ou Workshop não encontrado.', 404);
+    }
 
-    const durationText =
-      volunteer.end_date !== null
-        ? `Participou do projeto por ${diffMonths} meses (${diffDays} dias).`
-        : 'Ainda ativo como voluntário.';
+    const certificatePath = path.resolve(
+      __dirname,
+      '../../../../certificates',
+      `certificate_${user.id}_${workshop.id}.pdf`
+    );
 
-    // 🔹 3. Criar o PDF do certificado
+    const certificatesDir = path.dirname(certificatePath);
+    if (!fs.existsSync(certificatesDir)) {
+      fs.mkdirSync(certificatesDir, { recursive: true });
+    }
+
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
-    const filePath = path.join(
-      __dirname,
-      `../../../certificates/certificate_${volunteer.id}.pdf`
-    );
-    const stream = fs.createWriteStream(filePath);
+    const stream = fs.createWriteStream(certificatePath);
     doc.pipe(stream);
 
-    // 🔹 4. Adicionar informações ao certificado
+    doc.rect(20, 20, 555, 800).strokeColor('#2C3E50').lineWidth(5).stroke();
+    doc.rect(30, 30, 535, 780).strokeColor('#3498DB').lineWidth(3).stroke();
+
     doc
+      .font('Helvetica-Bold')
       .fontSize(24)
-      .text('CERTIFICADO DE PARTICIPAÇÃO', { align: 'center' })
-      .moveDown();
+      .fillColor('#2C3E50')
+      .text('CERTIFICADO DE PARTICIPAÇÃO', {
+        align: 'center',
+      });
+    doc.moveDown(2);
 
     doc
+      .font('Helvetica')
       .fontSize(16)
+      .fillColor('#34495E')
       .text(
-        `Certificamos que o aluno ${volunteer.name}, portador do RA ${volunteer.RA}, participou como voluntário no projeto de extensão Ensino Lúdico de Lógica e Programação.`,
-        { align: 'justify' }
-      )
-      .moveDown();
+        `Certificamos que ${user.name}, portador do RA ${user.RA}, participou do workshop:`,
+        {
+          align: 'center',
+        }
+      );
+    doc.moveDown();
 
-    doc.fontSize(14).text(durationText).moveDown();
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(18)
+      .fillColor('#2C3E50')
+      .text(`"${workshop.title}"`, {
+        align: 'center',
+      });
+    doc.moveDown();
+
+    doc
+      .font('Helvetica')
+      .fontSize(16)
+      .fillColor('#34495E')
+      .text(`Com duração total de ${workshop.duration} horas.`, {
+        align: 'center',
+      });
+    doc.moveDown(2);
 
     doc
       .fontSize(14)
-      .text('Assinatura do Coordenador:', { align: 'left' })
-      .moveDown();
+      .fillColor('#7F8C8D')
+      .text('Emitido em:', { align: 'center' });
+    doc
+      .font('Helvetica-Bold')
+      .text(new Date().toLocaleDateString('pt-BR'), { align: 'center' });
+    doc.moveDown(3);
 
-    doc.image(path.join(__dirname, '../../../assets/signature.png'), {
-      fit: [200, 50],
-      align: 'center',
-    });
+    const signaturePath = path.resolve(
+      __dirname,
+      '../../../assets/signature.png'
+    );
+    if (fs.existsSync(signaturePath)) {
+      doc.image(signaturePath, 200, 350, { width: 200 });
+    }
+
+    doc
+      .fontSize(14)
+      .fillColor('#2C3E50')
+      .text('__________________________', { align: 'center' });
+    doc
+      .fontSize(12)
+      .fillColor('#34495E')
+      .text('Coordenador do Workshop', { align: 'center' });
 
     doc.end();
 
-    return filePath;
+    return new Promise((resolve, reject) => {
+      stream.on('finish', () => resolve(certificatePath));
+      stream.on('error', (err) => reject(err));
+    });
   }
 }
 

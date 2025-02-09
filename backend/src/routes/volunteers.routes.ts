@@ -16,7 +16,7 @@ volunteersRoutes.post(
 );
 
 volunteersRoutes.get(
-  '/certificate/:id',
+  '/certificate',
   ensureAuthenticated,
   generateCertificateController.handle
 );
