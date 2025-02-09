@@ -1,6 +1,6 @@
-import { CalendarIcon, ClockIcon } from "@heroicons/react/16/solid";
+import { WorkshopCard } from "../../components/WorkshopCard";
 
-interface Workshop {
+interface VoluntarioWorkshop {
   id: number;
   title: string;
   date: string;
@@ -9,9 +9,9 @@ interface Workshop {
   availableSpots: number;
 }
 
-export function Workshops() {
+export function VoluntarioWorkshops() {
   // Dados estáticos temporários
-  const workshops: Workshop[] = [
+  const workshops: VoluntarioWorkshop[] = [
     {
       id: 1,
       title: "Introdução à Programação",
@@ -61,42 +61,22 @@ export function Workshops() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-4xl font-bold text-white mb-8">Workshops Disponíveis</h1>
-      
+      <h1 className="text-4xl font-bold text-white mb-8">
+        Workshops Disponíveis
+      </h1>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {workshops.map((workshop) => (
-          <div
+          <WorkshopCard
             key={workshop.id}
-            className="bg-gray-800 rounded-lg p-6 shadow-xl hover:shadow-2xl transition-shadow"
-          >
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-white mb-2">{workshop.title}</h2>
-              
-              <div className="flex items-center gap-2 text-gray-400 mb-2">
-                <CalendarIcon className="w-5 h-5" />
-                <span>{workshop.date}</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-gray-400">
-                <ClockIcon className="w-5 h-5" />
-                <span>{workshop.duration}</span>
-              </div>
-            </div>
-
-            <p className="text-gray-300 mb-4">{workshop.description}</p>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-green-400 font-medium">
-                Vagas disponíveis: {workshop.availableSpots}
-              </span>
-              <button
-                onClick={() => handleRegistration(workshop.id)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                Inscrever-se
-              </button>
-            </div>
-          </div>
+            variant="voluntario"
+            title={workshop.title}
+            date={workshop.date}
+            duration={workshop.duration}
+            description={workshop.description}
+            spotsText={`Vagas disponíveis: ${workshop.availableSpots}`}
+            onSubscribe={() => handleRegistration(workshop.id)}
+          />
         ))}
       </div>
     </div>

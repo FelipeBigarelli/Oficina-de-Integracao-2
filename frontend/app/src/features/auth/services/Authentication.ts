@@ -9,6 +9,7 @@ interface LoginResponse {
 }
 
 interface User {
+  RA: string;
   id: string;
   name: string;
   email: string;
