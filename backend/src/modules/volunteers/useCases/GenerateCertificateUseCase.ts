@@ -118,15 +118,6 @@ class GenerateCertificateUseCase {
       doc.image(signaturePath, 200, 350, { width: 200 });
     }
 
-    doc
-      .fontSize(14)
-      .fillColor('#2C3E50')
-      .text('__________________________', { align: 'center' });
-    doc
-      .fontSize(12)
-      .fillColor('#34495E')
-      .text('Coordenador do Workshop', { align: 'center' });
-
     doc.end();
 
     return new Promise((resolve, reject) => {
