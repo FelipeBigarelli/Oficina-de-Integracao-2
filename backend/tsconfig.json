@@ -8,13 +8,13 @@
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
-      // "@modules/*": ["modules/*"],
-      // "@config/*": ["config/*"],
-      // "@database/*": ["database/*"],
-      // "@errors/*": ["errors/*"],
-      // "@middlewares/*": ["middlewares/*"],
-      // "@container/*": ["container/*"],
-      // "@routes/*": ["routes/*"]
+      "@modules/*": ["modules/*"],
+      "@config/*": ["config/*"],
+      "@database/*": ["database/*"],
+      "@errors/*": ["errors/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@container/*": ["container/*"],
+      "@routes/*": ["routes/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
