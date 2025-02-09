@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { Workshop } from '../../workshops/entities/Workshop';
 
 @Entity('users')
 class User {
@@ -28,6 +31,9 @@ class User {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @ManyToMany(() => Workshop, (workshop) => workshop.volunteers)
+  volunteerWorkshops: Workshop[];
 
   constructor() {
     if (!this.id) {

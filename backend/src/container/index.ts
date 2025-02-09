@@ -6,6 +6,8 @@ import { UsersRepository } from '../modules/users/repositories/UsersRepository';
 import { UsersTokensRepository } from '../modules/users/repositories/UsersTokensRepository';
 import { IVolunteersRepository } from '../modules/volunteers/repositories/IVolunteersRepository';
 import { VolunteersRepository } from '../modules/volunteers/repositories/VolunteersRepository';
+import { IWorkshopsRepository } from '../modules/workshops/repositories/IWorkshopsRepository';
+import { WorkshopsRepository } from '../modules/workshops/repositories/WorkshopsRepository';
 
 import './providers/DateProvider';
 
@@ -22,4 +24,9 @@ container.registerSingleton<IUsersTokensRepository>(
 container.registerSingleton<IVolunteersRepository>(
   'VolunteersRepository',
   VolunteersRepository
+);
+
+container.registerSingleton<IWorkshopsRepository>(
+  'WorkshopsRepository',
+  WorkshopsRepository
 );
