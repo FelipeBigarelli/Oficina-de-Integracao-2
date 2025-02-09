@@ -5,11 +5,13 @@ import { App } from "./App";
 import { AuthPage } from "./features/auth/pages/AuthPage";
 import { ProtectedRoute } from "./features/auth/routes/ProtectedRoute";
 import { RoleBasedRoute } from "./features/auth/routes/RoleBasedRoute";
+import { Profile } from "./features/profiles/components/Profile";
+import { Alunos } from "./features/profiles/docente/pages/Alunos";
 import { Docente } from "./features/profiles/docente/pages/Docente";
+import { DocenteWorkshops } from "./features/profiles/docente/pages/DocenteWorkshops";
 import { Certificados } from "./features/profiles/voluntario/pages/Certificados";
-import { Perfil } from "./features/profiles/voluntario/pages/Perfil";
 import { Voluntario } from "./features/profiles/voluntario/pages/Voluntario";
-import { Workshops } from "./features/profiles/voluntario/pages/Workshops";
+import { VoluntarioWorkshops } from "./features/profiles/voluntario/pages/VoluntarioWorkshops";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -48,8 +50,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           }
         >
 
-          <Route path="perfil" element={<Perfil />} />
-          <Route path="workshops" element={<Workshops />} />
+          <Route path="perfil" element={<Profile />} />
+          <Route path="workshops" element={<VoluntarioWorkshops />} />
           <Route path="certificados" element={<Certificados />} />
 
         </Route>
@@ -64,18 +66,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               </RoleBasedRoute>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="workshops" element={<DocenteWorkshops />} />
+          <Route path="alunos" element={<Alunos />} />
+          <Route path="perfil" element={<Profile />} />
+        </Route>
 
-        <Route
-          path="/voluntario/workshops"
-          element={
-            <ProtectedRoute>
-              <RoleBasedRoute allowedRoles={["voluntario"]}>
-                <Workshops />
-              </RoleBasedRoute>
-            </ProtectedRoute>
-          }
-        />
       </Routes>
     </Router>
   </React.StrictMode>

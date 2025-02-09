@@ -7,7 +7,6 @@ describe('MenuItem Component', () => {
     render(<MenuItem title="Test Item" icon={<svg />} onClick={() => {}} />);
 
     expect(screen.getByText('Test Item')).not.toBeNull();
-    // Assuming you're using an <svg> tag for the icon, check its presence within the button
     expect(screen.getByRole('button')).toHaveProperty('innerHTML', expect.stringContaining('<svg'));
   });
 
