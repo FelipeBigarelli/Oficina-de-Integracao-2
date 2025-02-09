@@ -5,7 +5,8 @@ import { CreateVolunteerUseCase } from './CreateVolunteerUseCase';
 
 class CreateVolunteerController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { user_id, workshop_id } = request.body;
+    const { id: user_id } = request.user;
+    const { workshop_id } = request.body;
 
     const createVolunteerUseCase = container.resolve(CreateVolunteerUseCase);
 
