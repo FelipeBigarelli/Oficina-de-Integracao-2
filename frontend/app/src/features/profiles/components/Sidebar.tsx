@@ -1,4 +1,3 @@
-// components/Sidebar/Sidebar.tsx
 import { ReactElement } from 'react';
 import { logout } from '../../auth/services/Authentication';
 import MenuItem from './MenuItem';

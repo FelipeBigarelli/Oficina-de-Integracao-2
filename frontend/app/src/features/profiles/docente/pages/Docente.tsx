@@ -33,7 +33,6 @@ export const Docente = () => {
 
   return (
     <div className="flex h-screen bg-[#282c34]">
-      {/* Sidebar fixa */}
       <div className="fixed left-0 top-0 h-full z-50">
         <Sidebar
           menuItems={menuItems}
@@ -41,7 +40,6 @@ export const Docente = () => {
         />
       </div>
 
-      {/* Conteúdo principal */}
       <main className="flex-1 ml-64 p-8">
         <Outlet /> {/* Isso renderizará as subrotas */}
       </main>

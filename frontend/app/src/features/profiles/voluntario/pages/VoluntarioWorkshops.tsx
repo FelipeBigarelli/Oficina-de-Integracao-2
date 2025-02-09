@@ -1,63 +1,36 @@
+import { useEffect, useState } from 'react';
 import { WorkshopCard } from "../../components/WorkshopCard";
-
-interface VoluntarioWorkshop {
-  id: number;
-  title: string;
-  date: string;
-  duration: string;
-  description: string;
-  availableSpots: number;
-}
+import { WorkshopService } from '../../docente/services/WorkshopService';
+import { VoluntarioService } from '../../voluntario/services/VoluntarioService';
 
 export function VoluntarioWorkshops() {
-  // Dados estáticos temporários
-  const workshops: VoluntarioWorkshop[] = [
-    {
-      id: 1,
-      title: "Introdução à Programação",
-      date: "15/08/2024",
-      duration: "3 horas",
-      description: "Aprenda os conceitos básicos de programação usando Python",
-      availableSpots: 12,
-    },
-    {
-      id: 2,
-      title: "Robótica Educacional",
-      date: "20/08/2024",
-      duration: "4 horas",
-      description: "Montagem e programação de robôs simples com Arduino",
-      availableSpots: 8,
-    },
-    {
-      id: 3,
-      title: "Lógica de Jogos",
-      date: "25/08/2024",
-      duration: "5 horas",
-      description: "Desenvolvimento de algoritmos para jogos simples",
-      availableSpots: 15,
-    },
-    {
-      id: 4,
-      title: "Robótica Educacional",
-      date: "20/08/2024",
-      duration: "4 horas",
-      description: "Montagem e programação de robôs simples com Arduino",
-      availableSpots: 8,
-    },
-    {
-      id: 5,
-      title: "Lógica de Jogos",
-      date: "25/08/2024",
-      duration: "5 horas",
-      description: "Desenvolvimento de algoritmos para jogos simples",
-      availableSpots: 15,
-    },
-  ];
+  const [workshops, setWorkshops] = useState<any[]>([]);
+  const [error, setError] = useState('');
 
-  const handleRegistration = (workshopId: number) => {
-    alert(`Inscrição realizada para o workshop ID: ${workshopId}`);
-    // Aqui você implementará a lógica de inscrição quando tiver o backend
+  useEffect(() => {
+    const loadWorkshops = async () => {
+      try {
+        const data = await WorkshopService.getAll();
+        setWorkshops(data);
+      } catch (err) {
+        setError('Erro ao carregar workshops');
+      }
+    };
+
+    loadWorkshops();
+  }, []);
+
+  const handleRegistration = async (workshopId: number) => {
+    try {
+      // Converta o workshopId para string
+      await VoluntarioService.inscrever(workshopId.toString());
+      alert(`Inscrição realizada com sucesso para o workshop ID: ${workshopId}`);
+    } catch (err) {
+      alert('Erro ao realizar inscrição: ' + (err instanceof Error ? err.message : 'Erro desconhecido'));
+    }
   };
+
+  if (error) return <div className="text-red-500 p-6">{error}</div>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -71,10 +44,9 @@ export function VoluntarioWorkshops() {
             key={workshop.id}
             variant="voluntario"
             title={workshop.title}
-            date={workshop.date}
-            duration={workshop.duration}
+            date={new Date(workshop.date).toLocaleDateString()}
+            duration={`${workshop.duration} horas`}
             description={workshop.description}
-            spotsText={`Vagas disponíveis: ${workshop.availableSpots}`}
             onSubscribe={() => handleRegistration(workshop.id)}
           />
         ))}

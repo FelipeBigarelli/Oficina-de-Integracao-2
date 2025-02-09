@@ -1,35 +1,69 @@
+// components/Certificados.tsx
 import { CheckCircleIcon, DocumentTextIcon } from '@heroicons/react/16/solid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { VoluntarioService } from '../services/VoluntarioService';
 
 interface Certificado {
-  id: number;
+  id: string; // ID do workshop
   aluno: string;
   workshop: string;
   data: string;
-  duracao: number; // Novo campo adicionado
+  duracao: number;
 }
 
 export function Certificados() {
-  const [certificados, setCertificados] = useState<Certificado[]>([
-    {
-      id: 1,
-      aluno: "João Silva",
-      workshop: "Introdução à Programação",
-      data: "15/08/2024",
-      duracao: 3 
-    },
-    {
-      id: 2,
-      aluno: "João Silva",
-      workshop: "Robotica",
-      data: "15/08/2024",
-      duracao: 3 
-    }
-  ]);
+  const [certificados, setCertificados] = useState<Certificado[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [emitting, setEmitting] = useState(false); // Estado para controlar a emissão
 
-  const handleEmitirCertificado = (id: number) => {
-    alert(`Certificado ${id} emitido com sucesso!`);
+  useEffect(() => {
+    const loadWorkshopsInscritos = async () => {
+      try {
+        const workshopsInscritos = await VoluntarioService.listarWorkshopsInscritos();
+
+        // Mapear os dados da resposta para o formato de Certificado
+        const certificadosFormatados = workshopsInscritos.map((workshop) => ({
+          id: workshop.id_workshop,
+          aluno: workshop.nome_usuario,
+          workshop: workshop.nome_workshop,
+          data: new Date(workshop.data_workshop).toLocaleDateString(),
+          duracao: workshop.duracao_workshop,
+        }));
+
+        setCertificados(certificadosFormatados);
+      } catch (err) {
+        setError('Erro ao carregar workshops inscritos');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWorkshopsInscritos();
+  }, []);
+
+  const handleEmitirCertificado = async (id: string) => {
+    if (!confirm('Deseja realmente emitir este certificado?')) return;
+
+    setEmitting(true); // Inicia o estado de emissão
+    try {
+      const response = await VoluntarioService.emitirCertificado(id);
+      
+      if (response.certificate_url) {
+        // Abre o certificado em nova aba
+        window.open(response.certificate_url, '_blank');
+        alert('Certificado gerado com sucesso!');
+      }
+    } catch (err) {
+      console.error('Erro ao emitir certificado:', err);
+      alert(err instanceof Error ? err.message : 'Erro ao emitir certificado');
+    } finally {
+      setEmitting(false); // Finaliza o estado de emissão
+    }
   };
+
+  if (loading) return <div className="text-white p-6">Carregando certificados...</div>;
+  if (error) return <div className="text-red-500 p-6">{error}</div>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -70,9 +104,14 @@ export function Certificados() {
                   <button
                     onClick={() => handleEmitirCertificado(certificado.id)}
                     className="flex items-center gap-2 text-blue-500 hover:text-blue-400"
+                    disabled={emitting}
                   >
-                    <CheckCircleIcon className="w-5 h-5" />
-                    Emitir
+                    {emitting ? (
+                      <span className="animate-spin">⏳</span>
+                    ) : (
+                      <CheckCircleIcon className="w-5 h-5" />
+                    )}
+                    {emitting ? 'Emitindo...' : 'Emitir'}
                   </button>
                 </td>
               </tr>

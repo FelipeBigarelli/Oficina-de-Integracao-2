@@ -1,57 +1,68 @@
-import { PlusIcon } from '@heroicons/react/16/solid';
-import { useState } from 'react';
-import { WorkshopCard } from '../../components/WorkshopCard';
-
-interface Workshop {
-  id: number;
-  title: string;
-  date: string;
-  duration: number;
-  description: string;
-  participants: number;
-}
+import { PlusIcon } from "@heroicons/react/16/solid";
+import { useEffect, useState } from "react";
+import { WorkshopCard } from "../../components/WorkshopCard";
+import { WorkshopModal } from "../components/WorkshopModal";
+import { Workshop, WorkshopService } from "../services/WorkshopService";
 
 export function DocenteWorkshops() {
-  const [workshops, setWorkshops] = useState<Workshop[]>([
-    {
-      id: 1,
-      title: "Programação Básica",
-      date: "15/08/2024",
-        duration: 3,
-      description: "Aprenda os conceitos básicos de programação",
-      participants: 12,
-    },
-    {
-      id: 2,
-      title: "Robótica Educacional",
-      date: "20/08/2024",
-        duration: 4,
-      description: "Montagem e programação de robôs simples",
-      participants: 8,
-    },
-  ]);
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleCreate = () => {
-    // Lógica para criar novo workshop
-    console.log('Criar novo workshop');
+  useEffect(() => {
+    const loadWorkshops = async () => {
+      try {
+        const data = await WorkshopService.getAll();
+        setWorkshops(data);
+      } catch (err) {
+        setError("Erro ao carregar workshops");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWorkshops();
+  }, []);
+
+  const handleDelete = async (id: number) => {
+    try {
+      await WorkshopService.delete(id);
+      setWorkshops((prev) => prev.filter((w) => w.id !== id));
+    } catch (err) {
+      alert("Erro ao excluir workshop");
+    }
   };
 
-  const handleEdit = (id: number) => {
-    // Lógica para editar workshop
-    console.log('Editar workshop:', id);
+  const handleEdit = async (id: number) => {
+    try {
+      const workshopToEdit = workshops.find((w) => w.id === id);
+      if (!workshopToEdit) return;
+
+      const updatedWorkshop = await WorkshopService.update(id, workshopToEdit);
+      setWorkshops((prev) =>
+        prev.map((w) => (w.id === id ? updatedWorkshop : w))
+      );
+    } catch (err) {
+      alert("Erro ao atualizar workshop");
+    }
   };
 
-  const handleDelete = (id: number) => {
-    // Lógica para deletar workshop
-    setWorkshops(prev => prev.filter(w => w.id !== id));
+  const handleCreateSuccess = (newWorkshop: Workshop) => {
+    setWorkshops((prev) => [...prev, newWorkshop]);
+    setIsModalOpen(false);
   };
+
+  if (loading)
+    return <div className="text-white p-6">Carregando workshops...</div>;
+  if (error) return <div className="text-red-500 p-6">{error}</div>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-white">Gerenciar Workshops</h1>
         <button
-          onClick={handleCreate}
+          onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
         >
           <PlusIcon className="w-5 h-5" />
@@ -59,16 +70,21 @@ export function DocenteWorkshops() {
         </button>
       </div>
 
+      <WorkshopModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onCreate={handleCreateSuccess}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {workshops.map((workshop) => (
           <WorkshopCard
             key={workshop.id}
             variant="docente"
             title={workshop.title}
-            date={workshop.date}
+            date={new Date(workshop.date).toLocaleDateString()}
             duration={`${workshop.duration} horas`}
             description={workshop.description}
-            spotsText={`${workshop.participants} participantes`}
             onEdit={() => handleEdit(workshop.id)}
             onDelete={() => handleDelete(workshop.id)}
           />

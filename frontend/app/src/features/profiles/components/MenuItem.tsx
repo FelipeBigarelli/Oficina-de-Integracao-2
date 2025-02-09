@@ -1,4 +1,4 @@
-// components/Sidebar/MenuItem.tsx
+
 import { ReactElement } from 'react';
 
 interface MenuItemProps {

@@ -76,6 +76,7 @@ const storage = {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
   },
+
 };
 
 export async function signUp(userData: Record<string, string>): Promise<void> {
@@ -110,6 +111,11 @@ export function isAuthenticated(): boolean {
 
 export function getUser(): User | null {
   return storage.getUser();
+}
+
+export function getUserId(): string | null {
+  const user = getUser();
+  return user ? user.id : null;
 }
 
 export function getToken(): string | null {
