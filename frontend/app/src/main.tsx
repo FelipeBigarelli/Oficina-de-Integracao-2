@@ -1,20 +1,81 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import './index.css'
-import App from './App';
-//import { Voluntario } from "./pages/Voluntario";
-//import { Docente } from "./pages/Docente";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { App } from "./App";
 import { AuthPage } from "./features/auth/pages/AuthPage";
-import  AuthRoute from "./features/auth/routes/AuthRoute";
+import { ProtectedRoute } from "./features/auth/routes/ProtectedRoute";
+import { RoleBasedRoute } from "./features/auth/routes/RoleBasedRoute";
+import { Docente } from "./features/profiles/docente/pages/Docente";
+import { Certificados } from "./features/profiles/voluntario/pages/Certificados";
+import { Perfil } from "./features/profiles/voluntario/pages/Perfil";
+import { Voluntario } from "./features/profiles/voluntario/pages/Voluntario";
+import { Workshops } from "./features/profiles/voluntario/pages/Workshops";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<AuthRoute> <App></App> </AuthRoute>} />
-        <Route path="/auth" element={<AuthRoute> <AuthPage/> </AuthRoute>} />
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Rota raiz - hub central */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <App />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Rota de autenticação (não acessível se logado) */}
+        <Route
+          path="/auth"
+          element={
+            <ProtectedRoute requireAuth={false}>
+              <AuthPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Rota de voluntário (apenas para não-admins) */}
+        <Route
+          path="/voluntario"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={["voluntario"]}>
+                <Voluntario />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        >
+
+          <Route path="perfil" element={<Perfil />} />
+          <Route path="workshops" element={<Workshops />} />
+          <Route path="certificados" element={<Certificados />} />
+
+        </Route>
+
+        {/* Rota de docente (apenas para admins) */}
+        <Route
+          path="/docente"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={["admin"]}>
+                <Docente />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/voluntario/workshops"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={["voluntario"]}>
+                <Workshops />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   </React.StrictMode>

@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "types": ["jest"],
+    "jsx": "react-jsx",
+    "typeRoots": ["node_modules/@types", "node_modules/@types/testing-library__jest-dom"],
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
