@@ -1,6 +1,7 @@
 // features/profiles/voluntario/pages/Perfil.tsx
-import { useEffect, useState } from 'react';
-import { getUser } from '../../../auth/services/Authentication';
+import { useEffect, useState } from "react";
+import { getUser } from "../../../auth/services/Authentication";
+import { ProfileField } from "../../components/ProfileField";
 
 interface UserProfile {
   id: string;
@@ -21,8 +22,8 @@ export function Perfil() {
           id: userData.id,
           name: userData.name,
           email: userData.email,
-          ra: userData.RA || 'Não informado', // Adapte conforme seu modelo de usuário
-          is_admin: userData.is_admin
+          ra: userData.RA,
+          is_admin: userData.is_admin,
         });
       }
     };
@@ -37,25 +38,18 @@ export function Perfil() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-4xl font-bold text-white mb-8">Meu Perfil</h1>
-      
+
       <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
         <div className="space-y-4">
           <ProfileField label="Nome" value={user.name} />
           <ProfileField label="Email" value={user.email} />
           <ProfileField label="RA" value={user.ra} />
-          <ProfileField 
-            label="Tipo de Conta" 
-            value={user.is_admin ? 'Administrador' : 'Voluntário'} 
+          <ProfileField
+            label="Tipo de Conta"
+            value={user.is_admin ? "Administrador" : "Voluntário"}
           />
         </div>
       </div>
     </div>
   );
 }
-
-const ProfileField = ({ label, value }: { label: string; value?: string }) => (
-  <div className="border-b border-gray-700 pb-4">
-    <dt className="text-sm font-medium text-gray-400">{label}</dt>
-    <dd className="mt-1 text-lg text-white">{value || 'Não informado'}</dd>
-  </div>
-);
