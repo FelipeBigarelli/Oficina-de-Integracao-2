@@ -1,5 +1,6 @@
 import { getRepository, Repository } from 'typeorm';
 
+import { AppError } from '../../../errors/AppError';
 import { ICreateWorkshopDTO } from '../dtos/ICreateWorkshopDTO';
 import { Workshop } from '../entities/Workshop';
 import { IWorkshopsRepository } from './IWorkshopsRepository';
@@ -41,6 +42,32 @@ class WorkshopsRepository implements IWorkshopsRepository {
     const workshops = await this.repository.find();
 
     return workshops;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.repository.delete(id);
+  }
+
+  async update(data: ICreateWorkshopDTO): Promise<Workshop> {
+    const { id, title, description, date, duration } = data;
+
+    let workshop = await this.repository.findOne({ where: { id } });
+
+    if (!workshop) {
+      throw new AppError('Workshop não encontrado!', 404);
+    }
+
+    workshop = this.repository.create({
+      id,
+      title,
+      description,
+      date,
+      duration,
+    });
+
+    await this.repository.save(workshop);
+
+    return workshop;
   }
 }
 
