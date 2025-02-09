@@ -26,7 +26,15 @@ export class FakeWorkshopsRepository implements IWorkshopsRepository {
   }
 
   async delete(id: string): Promise<void> {
-    this.workshops = this.workshops.filter((workshop) => workshop.id !== id);
+    const workshopIndex = this.workshops.findIndex(
+      (workshop) => workshop.id === id
+    );
+
+    if (workshopIndex === -1) {
+      throw new Error('Workshop not found');
+    }
+
+    this.workshops.splice(workshopIndex, 1);
   }
 
   async update(data: ICreateWorkshopDTO): Promise<Workshop> {

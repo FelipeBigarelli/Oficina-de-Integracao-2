@@ -1,0 +1,56 @@
+import { v4 as uuidv4 } from 'uuid';
+
+import { ICreateVolunteerDTO } from '../../dtos/ICreateVolunteerDTO';
+import { Volunteer } from '../../entities/Volunteer';
+import { IVolunteersRepository } from '../IVolunteersRepository';
+
+export class FakeVolunteersRepository implements IVolunteersRepository {
+  findByUserAndWorkshop(user_id: string, workshop_id: string): Promise<Volunteer> {
+    throw new Error('Method not implemented.');
+  }
+  private volunteers: Volunteer[] = [];
+
+  async create(data: ICreateVolunteerDTO): Promise<Volunteer> {
+    const volunteer = new Volunteer();
+
+    Object.assign(volunteer, { id: uuidv4(), ...data });
+
+    this.volunteers.push(volunteer);
+
+    return volunteer;
+  }
+
+  async findById(id: string): Promise<Volunteer | undefined> {
+    return this.volunteers.find((volunteer) => volunteer.id === id);
+  }
+
+  async list(): Promise<Volunteer[]> {
+    return this.volunteers;
+  }
+
+  async delete(id: string): Promise<void> {
+    const volunteerIndex = this.volunteers.findIndex(
+      (volunteer) => volunteer.id === id
+    );
+
+    if (volunteerIndex === -1) {
+      throw new Error('Volunteer not found');
+    }
+
+    this.volunteers.splice(volunteerIndex, 1);
+  }
+
+  async update(data: ICreateVolunteerDTO): Promise<Volunteer> {
+    const volunteerIndex = this.volunteers.findIndex((v) => v.id === data.id);
+
+    if (volunteerIndex === -1) {
+      throw new Error('Volunteer not found');
+    }
+
+    const updatedVolunteer = { ...this.volunteers[volunteerIndex], ...data };
+
+    this.volunteers[volunteerIndex] = updatedVolunteer;
+
+    return updatedVolunteer;
+  }
+}

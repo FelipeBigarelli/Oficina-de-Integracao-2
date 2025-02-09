@@ -16,7 +16,7 @@ volunteersRoutes.post(
 );
 
 volunteersRoutes.get(
-  '/certificate',
+  '/certificate/:workshop_id',
   ensureAuthenticated,
   generateCertificateController.handle
 );
