@@ -36,6 +36,12 @@ class VolunteersRepository implements IVolunteersRepository {
 
     return volunteer;
   }
+
+  async findById(id: string): Promise<Volunteer> {
+    const volunteer = this.repository.findOne(id);
+
+    return volunteer;
+  }
 }
 
 export { VolunteersRepository };
