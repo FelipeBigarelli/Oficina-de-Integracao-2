@@ -21,12 +21,12 @@ container.registerSingleton<IUsersTokensRepository>(
   UsersTokensRepository
 );
 
-container.registerSingleton<IVolunteersRepository>(
-  'VolunteersRepository',
-  VolunteersRepository
-);
-
 container.registerSingleton<IWorkshopsRepository>(
   'WorkshopsRepository',
   WorkshopsRepository
+);
+
+container.registerSingleton<IVolunteersRepository>(
+  'VolunteersRepository',
+  VolunteersRepository
 );

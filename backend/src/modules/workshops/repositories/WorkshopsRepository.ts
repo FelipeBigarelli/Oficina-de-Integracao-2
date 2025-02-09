@@ -36,6 +36,12 @@ class WorkshopsRepository implements IWorkshopsRepository {
 
     return workshop;
   }
+
+  async list(): Promise<Workshop[]> {
+    const workshops = await this.repository.find();
+
+    return workshops;
+  }
 }
 
 export { WorkshopsRepository };

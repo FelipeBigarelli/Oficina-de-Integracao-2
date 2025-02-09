@@ -1,14 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { User } from '../../users/entities/User';
+import { Workshop } from '../../workshops/entities/Workshop';
 
 @Entity('volunteers')
 class Volunteer {
@@ -19,26 +13,13 @@ class Volunteer {
   user_id: string;
 
   @Column()
-  name: string;
+  workshop_id: string;
 
-  @Column()
-  RA: string;
-
-  @CreateDateColumn()
-  start_date: Date;
-
-  @Column()
-  end_date: Date | null;
-
-  @Column()
-  status: boolean;
-
-  @Column()
-  certificate_url: string;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.volunteerWorkshops)
   user: User;
+
+  @ManyToOne(() => Workshop, (workshop) => workshop.volunteers)
+  workshop: Workshop;
 
   constructor() {
     if (!this.id) {
