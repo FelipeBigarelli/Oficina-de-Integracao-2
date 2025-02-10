@@ -9,7 +9,6 @@ export function DocenteWorkshops() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workshopToEdit, setWorkshopToEdit] = useState<Workshop | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [warningModal, setWarningModal] = useState({
     isOpen: false,
@@ -24,8 +23,6 @@ export function DocenteWorkshops() {
         setWorkshops(data);
       } catch (err) {
         setError("Erro ao carregar workshops");
-      } finally {
-        setLoading(false);
       }
     };
 
