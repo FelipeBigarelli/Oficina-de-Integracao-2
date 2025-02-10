@@ -21,9 +21,8 @@ interface WorkshopInscrito {
 }
 
 interface CertificateResponse {
-  message: string;
-  certificate_url: string;
-}
+    certificate_url: string;
+  }
 
 const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem(TOKEN_KEY);
@@ -86,23 +85,18 @@ export const VoluntarioService = {
     });
   
     return await response.json();
-  },
-
-  async emitirCertificado(workshopId: string): Promise<CertificateResponse> {
-    const requestBody = {
-      workshop_id: workshopId,
-    };
+  },async emitirCertificado(workshopId: string): Promise<CertificateResponse> {
+    const endpoint = `/volunteers/certificate?workshop_id=${workshopId}`;
   
-    console.log('Request Body:', requestBody); // Log do corpo da requisição
-  
-    const response = await fetchApi('/volunteers/certificate', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
+    const response = await fetchApi(endpoint, {
+      method: 'GET',
     });
   
-    const result = await response.json();
-    console.log('Response:', result); // Log da resposta
+    // Parse the response as text, not JSON
+    const result = await response.text();
+    console.log('Certificate URL:', result); // Log the certificate URL
   
-    return result;
+    // Return the URL as a string
+    return { certificate_url: result };
   }
 };

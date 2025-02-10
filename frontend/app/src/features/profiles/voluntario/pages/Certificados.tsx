@@ -44,23 +44,23 @@ export function Certificados() {
 
   const handleEmitirCertificado = async (id: string) => {
     if (!confirm('Deseja realmente emitir este certificado?')) return;
-
-    setEmitting(true); // Inicia o estado de emissão
+  
+    setEmitting(true);
     try {
       const response = await VoluntarioService.emitirCertificado(id);
       
-      if (response.certificate_url) {
-        // Abre o certificado em nova aba
-        window.open(response.certificate_url, '_blank');
-        alert('Certificado gerado com sucesso!');
-      }
+      // Log the certificate URL to the console
+      console.log("Certificate URL:", response.certificate_url);
+  
+      alert('Certificado gerado com sucesso!');
     } catch (err) {
       console.error('Erro ao emitir certificado:', err);
-      alert(err instanceof Error ? err.message : 'Erro ao emitir certificado');
+      alert(err instanceof Error? err.message: 'Erro ao emitir certificado');
     } finally {
-      setEmitting(false); // Finaliza o estado de emissão
+      setEmitting(false);
     }
   };
+  
 
   if (loading) return <div className="text-white p-6">Carregando certificados...</div>;
   if (error) return <div className="text-red-500 p-6">{error}</div>;
