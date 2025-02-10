@@ -86,7 +86,7 @@ export const VoluntarioService = {
   
     return await response.json();
   },async emitirCertificado(workshopId: string): Promise<CertificateResponse> {
-    const endpoint = `/volunteers/certificate?workshop_id=${workshopId}`;
+    const endpoint = `/volunteers/certificate/${workshopId}`;
   
     const response = await fetchApi(endpoint, {
       method: 'GET',

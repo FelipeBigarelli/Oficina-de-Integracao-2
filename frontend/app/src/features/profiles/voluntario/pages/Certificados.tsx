@@ -48,11 +48,28 @@ export function Certificados() {
     setEmitting(true);
     try {
       const response = await VoluntarioService.emitirCertificado(id);
-      
-      // Log the certificate URL to the console
-      console.log("Certificate URL:", response.certificate_url);
   
-      alert('Certificado gerado com sucesso!');
+      // Parse the response as JSON
+      const jsonData = JSON.parse(response.certificate_url);
+  
+      // Access the certificate_url property
+      const certificateUrl = jsonData.certificate_url;
+  
+      // Verifica se o link está presente e é válido
+      if (certificateUrl) {
+        const url = new URL(certificateUrl);
+  
+        // Verifica se o protocolo é HTTP ou HTTPS
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+          // Abre o link em nova guia
+          window.open(certificateUrl, '_blank');
+          alert('Certificado gerado com sucesso!');
+        } else {
+          throw new Error('Link do certificado inválido');
+        }
+      } else {
+        throw new Error('Link do certificado não encontrado na resposta');
+      }
     } catch (err) {
       console.error('Erro ao emitir certificado:', err);
       alert(err instanceof Error? err.message: 'Erro ao emitir certificado');
@@ -60,7 +77,6 @@ export function Certificados() {
       setEmitting(false);
     }
   };
-  
 
   if (loading) return <div className="text-white p-6">Carregando certificados...</div>;
   if (error) return <div className="text-red-500 p-6">{error}</div>;

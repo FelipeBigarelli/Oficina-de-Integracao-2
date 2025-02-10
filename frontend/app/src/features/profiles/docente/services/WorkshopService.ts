@@ -8,7 +8,6 @@ export interface Workshop {
   date: string;       // Espera formato "DD/MM/YYYY"
   duration: number;   // Em minutos (convertido de string para number)
   description: string;
-  participants: number;
 }
 
 interface WorkshopRequest {
@@ -40,7 +39,6 @@ const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
   return response;
 };
 
-// Função para converter datas
 const formatDateToDDMMYYYY = (dateString: string) => {
   const date = new Date(dateString);
   return `${date.getDate().toString().padStart(2, '0')}/${
@@ -75,11 +73,10 @@ export const WorkshopService = {
       description: workshop.description,
       date: new Date(workshop.date).toISOString(), // Convertendo para Date ISO
       duration: parseInt(workshop.duration, 10),   // Convertendo para número
-      participants: workshop.participants || 0
     }));
   },
 
-  async update(id: number, workshopData: Partial<Workshop>): Promise<Workshop> {
+  async update(id: string, workshopData: Partial<Workshop>): Promise<Workshop> {
     const requestBody: Partial<WorkshopRequest> = {};
     
     if (workshopData.title) requestBody.title = workshopData.title;
@@ -87,7 +84,7 @@ export const WorkshopService = {
     if (workshopData.date) requestBody.date = formatDateToDDMMYYYY(workshopData.date);
     if (workshopData.duration) requestBody.duration = workshopData.duration.toString();
 
-    const response = await fetchApi(`/workshops/${id}`, {
+    const response = await fetchApi(`/workshops/edit/${id}`, {
       method: 'PUT',
       body: JSON.stringify(requestBody),
     });
@@ -96,8 +93,14 @@ export const WorkshopService = {
   },
 
   async delete(id: number): Promise<void> {
-    await fetchApi(`/workshops/${id}`, {
+
+    const request = {
+      workshop_id: id
+    };
+
+    await fetchApi(`/workshops/delete`, {
       method: 'DELETE',
+      body: JSON.stringify(request),
     });
   },
 };

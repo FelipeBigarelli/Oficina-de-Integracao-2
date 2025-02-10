@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { WarningModal } from '../../components/WarningModal'; // Importe o WarningModal
 import { WorkshopCard } from "../../components/WorkshopCard";
 import { WorkshopService } from '../../docente/services/WorkshopService';
 import { VoluntarioService } from '../../voluntario/services/VoluntarioService';
@@ -6,6 +7,11 @@ import { VoluntarioService } from '../../voluntario/services/VoluntarioService';
 export function VoluntarioWorkshops() {
   const [workshops, setWorkshops] = useState<any[]>([]);
   const [error, setError] = useState('');
+  const [warningModal, setWarningModal] = useState({
+    isOpen: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
 
   useEffect(() => {
     const loadWorkshops = async () => {
@@ -22,11 +28,18 @@ export function VoluntarioWorkshops() {
 
   const handleRegistration = async (workshopId: number) => {
     try {
-      // Converta o workshopId para string
       await VoluntarioService.inscrever(workshopId.toString());
-      alert(`Inscrição realizada com sucesso para o workshop ID: ${workshopId}`);
+      setWarningModal({
+        isOpen: true,
+        message: `Inscrição realizada com sucesso para o workshop ID: ${workshopId}`,
+        type: "success",
+      });
     } catch (err) {
-      alert('Erro ao realizar inscrição: ' + (err instanceof Error ? err.message : 'Erro desconhecido'));
+      setWarningModal({
+        isOpen: true,
+        message: 'Erro ao realizar inscrição: ' + (err instanceof Error ? err.message : 'Erro desconhecido'),
+        type: "error",
+      });
     }
   };
 
@@ -37,6 +50,13 @@ export function VoluntarioWorkshops() {
       <h1 className="text-4xl font-bold text-white mb-8">
         Workshops Disponíveis
       </h1>
+
+      <WarningModal
+        isOpen={warningModal.isOpen}
+        onClose={() => setWarningModal({ ...warningModal, isOpen: false })}
+        message={warningModal.message}
+        type={warningModal.type}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {workshops.map((workshop) => (
