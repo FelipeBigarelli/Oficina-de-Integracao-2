@@ -1,34 +1,30 @@
 import { FakeWorkshopsRepository } from '../repositories/fakes/FakeWorkshopsRepository';
+import { ListWorkshopsUseCase } from '../useCases/ListWorkshopsUseCase';
 
-describe('ListWorkshops', () => {
-  it('should be able to list all workshops', async () => {
+describe('ListWorkshopsUseCase', () => {
+  it('should list all workshops', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const listWorkshops = new ListWorkshopsUseCase(fakeWorkshopsRepository);
 
     await fakeWorkshopsRepository.create({
       title: 'Workshop de React',
-      description: 'Aprenda a criar SPAs com React',
-      date: new Date('2025-06-15'),
-      duration: '3h',
+      description: 'Aprenda React na prática',
+      date: new Date('2025-06-10'),
+      duration: '2h',
     });
 
-    await fakeWorkshopsRepository.create({
-      title: 'Workshop de Node.js',
-      description: 'Aprenda a criar APIs com Node.js',
-      date: new Date('2025-07-20'),
-      duration: '4h',
-    });
+    const workshops = await listWorkshops.execute();
 
-    const workshops = await fakeWorkshopsRepository.list();
-
-    expect(workshops).toHaveLength(2);
+    expect(workshops).toHaveLength(1);
     expect(workshops[0]).toHaveProperty('id');
-    expect(workshops[1]).toHaveProperty('id');
+    expect(workshops[0].title).toBe('Workshop de React');
   });
 
   it('should return an empty array if no workshops exist', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const listWorkshops = new ListWorkshopsUseCase(fakeWorkshopsRepository);
 
-    const workshops = await fakeWorkshopsRepository.list();
+    const workshops = await listWorkshops.execute();
 
     expect(workshops).toEqual([]);
   });

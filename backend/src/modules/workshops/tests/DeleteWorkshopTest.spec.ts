@@ -1,29 +1,31 @@
 import { FakeWorkshopsRepository } from '../repositories/fakes/FakeWorkshopsRepository';
+import { DeleteWorkshopUseCase } from '../useCases/DeleteWorkshopUseCase';
 
-describe('DeleteWorkshop', () => {
-  it('should be able to delete a workshop', async () => {
+describe('DeleteWorkshopUseCase', () => {
+  it('should delete a workshop', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const deleteWorkshop = new DeleteWorkshopUseCase(fakeWorkshopsRepository);
 
-    // Criando um workshop
     const workshop = await fakeWorkshopsRepository.create({
-      title: 'Workshop de Angular',
-      description: 'Aprenda Angular do básico ao avançado',
-      date: new Date('2025-08-25'),
-      duration: '5h',
+      title: 'Workshop para Deletar',
+      description: 'Será excluído',
+      date: new Date('2025-09-10'),
+      duration: '1h',
     });
 
-    await fakeWorkshopsRepository.delete(workshop.id);
+    await deleteWorkshop.execute(workshop.id);
 
     const workshops = await fakeWorkshopsRepository.list();
 
     expect(workshops).toHaveLength(0);
   });
 
-  it('should throw an error when trying to delete a non-existent workshop', async () => {
+  it('should throw an error if the workshop does not exist', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const deleteWorkshop = new DeleteWorkshopUseCase(fakeWorkshopsRepository);
 
-    await expect(
-      fakeWorkshopsRepository.delete('non-existing-id')
-    ).rejects.toThrow('Workshop not found');
+    await expect(deleteWorkshop.execute('non-existing-id')).rejects.toThrow(
+      'Workshop not found'
+    );
   });
 });

@@ -1,40 +1,53 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ICreateUserTokenDTO } from '../../dtos/ICreateUserTokenDTO';
 import { UserTokens } from '../../entities/UserTokens';
 import { IUsersTokensRepository } from '../IUsersTokensRepository';
 
-class FakeUserTokensRepository implements IUsersTokensRepository {
-  private userTokens: UserTokens[] = [];
+class FakeUsersTokensRepository implements IUsersTokensRepository {
+  private usersTokens: UserTokens[] = [];
 
   async create({
-    expires_date,
-    refresh_token,
     user_id,
-  }: ICreateUserTokenDTO): Promise<UserTokens> {
+    refresh_token,
+    expires_date,
+  }: {
+    user_id: string;
+    refresh_token: string;
+    expires_date: Date;
+  }): Promise<UserTokens> {
     const userToken = new UserTokens();
 
     Object.assign(userToken, {
-      expires_date,
-      refresh_token,
+      id: Math.random().toString(36).substr(2, 9), // Simula um ID único
       user_id,
+      refresh_token,
+      expires_date,
     });
 
-    this.userTokens.push(userToken);
+    this.usersTokens.push(userToken);
 
     return userToken;
   }
-  findByUserIdAndRefreshToken(
+
+  async findByUserIdAndRefreshToken(
     user_id: string,
     refresh_token: string
-  ): Promise<UserTokens> {
-    throw new Error('Method not implemented.');
+  ): Promise<UserTokens | undefined> {
+    return this.usersTokens.find(
+      (token) =>
+        token.user_id === user_id && token.refresh_token === refresh_token
+    );
   }
-  deleteById(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+
+  async deleteById(id: string): Promise<void> {
+    this.usersTokens = this.usersTokens.filter((token) => token.id !== id);
   }
-  findByRefreshToken(refresh_token: string): Promise<UserTokens> {
-    throw new Error('Method not implemented.');
+
+  async findByRefreshToken(
+    refresh_token: string
+  ): Promise<UserTokens | undefined> {
+    return this.usersTokens.find(
+      (token) => token.refresh_token === refresh_token
+    );
   }
 }
 
-export default FakeUserTokensRepository;
+export { FakeUsersTokensRepository };

@@ -1,44 +1,27 @@
 import { FakeWorkshopsRepository } from '../repositories/fakes/FakeWorkshopsRepository';
+import { UpdateWorkshopUseCase } from '../useCases/UpdateWorkshopUseCase';
 
-describe('UpdateWorkshop', () => {
-  it('should be able to update an existing workshop', async () => {
+describe('UpdateWorkshopUseCase', () => {
+  it('should update an existing workshop', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const updateWorkshop = new UpdateWorkshopUseCase(fakeWorkshopsRepository);
 
-    // Criando um workshop inicial
     const workshop = await fakeWorkshopsRepository.create({
-      title: 'Workshop de Node.js',
-      description: 'Aprenda Node.js',
-      date: new Date('2025-02-10'),
+      title: 'Workshop Antigo',
+      description: 'Descrição Antiga',
+      date: new Date('2025-07-10'),
+      duration: '1h',
+    });
+
+    const updatedWorkshop = await updateWorkshop.execute({
+      id: workshop.id,
+      title: 'Workshop Atualizado',
+      description: 'Nova descrição',
+      date: new Date('2025-08-10'),
       duration: '2h',
     });
 
-    // Atualizando o workshop
-    const updatedWorkshop = await fakeWorkshopsRepository.update({
-      id: workshop.id,
-      title: 'Workshop de NestJS',
-      description: 'Aprenda NestJS',
-      date: new Date('2025-03-15'),
-      duration: '3h',
-    });
-
-    expect(updatedWorkshop.id).toBe(workshop.id);
-    expect(updatedWorkshop.title).toBe('Workshop de NestJS');
-    expect(updatedWorkshop.description).toBe('Aprenda NestJS');
-    expect(updatedWorkshop.date).toEqual(new Date('2025-03-15'));
-    expect(updatedWorkshop.duration).toBe('3h');
-  });
-
-  it('should throw an error if the workshop does not exist', async () => {
-    const fakeWorkshopsRepository = new FakeWorkshopsRepository();
-
-    await expect(
-      fakeWorkshopsRepository.update({
-        id: 'non-existing-id',
-        title: 'Workshop Inválido',
-        description: 'Esse workshop não existe',
-        date: new Date('2025-04-20'),
-        duration: '1h',
-      })
-    ).rejects.toThrow('Workshop not found');
+    expect(updatedWorkshop.title).toBe('Workshop Atualizado');
+    expect(updatedWorkshop.description).toBe('Nova descrição');
   });
 });

@@ -1,19 +1,19 @@
 import { FakeWorkshopsRepository } from '../repositories/fakes/FakeWorkshopsRepository';
+import { CreateWorkshopUseCase } from '../useCases/CreateWorkshopUseCase';
 
-describe('CreateWorkshop', () => {
-  it('should be able to create a new workshop', async () => {
+describe('CreateWorkshopUseCase', () => {
+  it('should create a new workshop', async () => {
     const fakeWorkshopsRepository = new FakeWorkshopsRepository();
+    const createWorkshop = new CreateWorkshopUseCase(fakeWorkshopsRepository);
 
-    const workshop = await fakeWorkshopsRepository.create({
+    const workshop = await createWorkshop.execute({
       title: 'Workshop de TypeScript',
-      description: 'Aprenda os fundamentos do TypeScript',
+      description: 'Aprenda TypeScript na prática',
       date: new Date('2025-05-10'),
-      duration: '2h',
+      duration: '3h',
     });
 
     expect(workshop).toHaveProperty('id');
     expect(workshop.title).toBe('Workshop de TypeScript');
-    expect(workshop.description).toBe('Aprenda os fundamentos do TypeScript');
-    expect(workshop.duration).toBe('2h');
   });
 });

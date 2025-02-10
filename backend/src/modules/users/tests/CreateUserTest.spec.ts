@@ -1,19 +1,68 @@
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 import { CreateUserUseCase } from '../useCases/CreateUserUseCase';
 
-describe('CreateUser', () => {
-  it('should be able to create a new user', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createUser = new CreateUserUseCase(fakeUsersRepository);
+describe('CreateUserUseCase', () => {
+  let createUser: CreateUserUseCase;
+  let fakeUsersRepository: FakeUsersRepository;
 
-    const user = await createUser.execute({
-      name: 'Felipe Bigarelli',
-      email: 'felipeteste@gmail.com',
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    createUser = new CreateUserUseCase(fakeUsersRepository);
+  });
+
+  it('should not allow creating a user that already exists', async () => {
+    const userData = {
+      name: 'John Doe',
+      email: 'john@example.com',
       password: '123456',
-      RA: 'a2053659',
+      RA: 'A12345',
+    };
+
+    // Criar usuário pela primeira vez
+    await createUser.execute(userData);
+
+    // Tentar criar o mesmo usuário novamente
+    await expect(createUser.execute(userData)).rejects.toMatchObject({
+      message: 'User already exists',
+      statusCode: 403,
+    });
+  });
+
+  it('should not allow creating a user with missing fields', async () => {
+    await expect(
+      createUser.execute({
+        name: 'John Doe',
+        email: '',
+        password: '123456',
+        RA: 'A12345',
+      })
+    ).rejects.toMatchObject({
+      message: 'Missing fields, check again',
+      statusCode: 400,
     });
 
-    expect(user).toHaveProperty('id');
-    expect(user.id).not.toBeUndefined();
+    await expect(
+      createUser.execute({
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: '',
+        RA: 'A12345',
+      })
+    ).rejects.toMatchObject({
+      message: 'Missing fields, check again',
+      statusCode: 400,
+    });
+
+    await expect(
+      createUser.execute({
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: '123456',
+        RA: '',
+      })
+    ).rejects.toMatchObject({
+      message: 'Missing fields, check again',
+      statusCode: 400,
+    });
   });
 });

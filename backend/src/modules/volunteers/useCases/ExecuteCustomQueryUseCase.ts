@@ -15,6 +15,7 @@ class ExecuteCustomQueryUseCase {
       const connectionManager = getConnectionManager();
 
       if (!connectionManager.has('default')) {
+        console.log('ERRO: Banco de dados não conectado!'); // <-- Log para depuração
         throw new AppError('Banco de dados não conectado.', 500);
       }
 

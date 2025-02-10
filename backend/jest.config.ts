@@ -8,7 +8,10 @@ export default {
 
   collectCoverage: true,
 
-  collectCoverageFrom: ["<rootDir>/src/modules/**/useCases/*.ts"],
+  collectCoverageFrom: [
+    "<rootDir>/src/modules/**/useCases/*.ts", 
+    "!<rootDir>/src/modules/**/useCases/*Controller.ts", 
+  ],
 
   coverageDirectory: "coverage",
 
