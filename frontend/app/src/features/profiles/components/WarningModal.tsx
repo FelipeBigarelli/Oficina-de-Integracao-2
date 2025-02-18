@@ -26,7 +26,14 @@ export function WarningModal({ isOpen, onClose, message, type }: WarningModalPro
           ) : (
             <ExclamationCircleIcon className="w-12 h-12 text-red-500" />
           )}
-          <p className="text-white text-center">{message}</p>
+          
+          {/* Dividindo a mensagem por linhas */}
+          <div className="text-white text-center">
+            {message.split("\n").map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
+
           <button
             onClick={onClose}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"

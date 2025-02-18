@@ -26,6 +26,11 @@ export const Docente = () => {
       path: "/docente/alunos",
       icon: <AcademicCapIcon />,
     },
+    {
+      title: "Certificados",
+      path: "/docente/certificados",
+      icon: <BookOpenIcon />,
+    },
   ].map(item => ({
   ...item,
     isActive: location.pathname === item.path

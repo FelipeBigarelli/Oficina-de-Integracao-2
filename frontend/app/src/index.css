@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+    min-height: 100vh; /* Garante que pelo menos cobre a tela inteira */
+    background-color: rgb(40 44 52 / var(--tw-bg-opacity, 1)); /* Cor de fundo da página */
+  }
+  

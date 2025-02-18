@@ -7,9 +7,9 @@ import { ProtectedRoute } from "./features/auth/routes/ProtectedRoute";
 import { RoleBasedRoute } from "./features/auth/routes/RoleBasedRoute";
 import { Profile } from "./features/profiles/components/Profile";
 import { Alunos } from "./features/profiles/docente/pages/Alunos";
+import { Certificados } from "./features/profiles/docente/pages/Certificados";
 import { Docente } from "./features/profiles/docente/pages/Docente";
 import { DocenteWorkshops } from "./features/profiles/docente/pages/DocenteWorkshops";
-import { Certificados } from "./features/profiles/voluntario/pages/Certificados";
 import { Voluntario } from "./features/profiles/voluntario/pages/Voluntario";
 import { VoluntarioWorkshops } from "./features/profiles/voluntario/pages/VoluntarioWorkshops";
 import "./index.css";
@@ -18,7 +18,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Router>
       <Routes>
-        {/* Rota raiz - hub central */}
         <Route
           path="/"
           element={
@@ -52,7 +51,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
           <Route path="perfil" element={<Profile />} />
           <Route path="workshops" element={<VoluntarioWorkshops />} />
-          <Route path="certificados" element={<Certificados />} />
 
         </Route>
 
@@ -70,6 +68,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="workshops" element={<DocenteWorkshops />} />
           <Route path="alunos" element={<Alunos />} />
           <Route path="perfil" element={<Profile />} />
+          <Route path="certificados" element={<Certificados />} />
         </Route>
 
       </Routes>
