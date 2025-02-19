@@ -21,11 +21,9 @@ RF01: O sistema deve permitir que cada ator (voluntário, docente) realize o log
 
 RF02: O sistema deve permitir que docentes cadastrem novos workshops.
 
-RF03: O sistema deve permitir que docentes cadastrem novos voluntarios.
+RF03: O sistema deve permitir que voluntarios emitam certificados dos workshops ministrados.
 
-RF04: O sistema deve permitir que voluntarios emitam certificados dos workshops ministrados.
-
-RF05: O sistema deve permitir que docentes gerenciem voluntários, incluindo o acompanhamento e registro de horas complementares computadas para esses alunos.
+RF04 - O sistema deve permitir que docentes emitam certificados dos workshops ministrados.
 
 ***
 
