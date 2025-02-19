@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { AppError } from '../errors/AppError';
 import { UsersRepository } from '../modules/users/repositories/UsersRepository';
 
 export async function ensureAdmin(
@@ -13,7 +14,7 @@ export async function ensureAdmin(
   const user = await usersRepository.findById(id);
 
   if (!user.is_admin) {
-    throw new Error("User isn't admin");
+    throw new AppError('Usuário não é docente', 401);
   }
 
   return next();

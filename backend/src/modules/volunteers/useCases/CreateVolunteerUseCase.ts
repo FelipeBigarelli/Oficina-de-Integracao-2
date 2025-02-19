@@ -24,7 +24,6 @@ class CreateVolunteerUseCase {
       );
 
     if (alreadyVolunteer) {
-      console.log('DEBUG: Voluntário duplicado encontrado!', alreadyVolunteer);
       throw new AppError('Usuário já é voluntário neste workshop.', 409);
     }
 

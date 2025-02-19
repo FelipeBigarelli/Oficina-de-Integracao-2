@@ -5,8 +5,7 @@ import { GenerateCertificateUseCase } from './GenerateCertificateUseCase';
 
 class GenerateCertificateController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { id: user_id } = request.user;
-    const { workshop_id } = request.params;
+    const { user_id, workshop_id } = request.body;
 
     const generateCertificateUseCase = container.resolve(
       GenerateCertificateUseCase
