@@ -11,11 +11,13 @@ class DeleteWorkshopUseCase {
   ) {}
 
   async execute(id: string): Promise<void> {
-    const workshop = this.workshopsRepository.delete(id);
+    const workshop = await this.workshopsRepository.findById(id);
+
     if (!workshop) {
       throw new AppError('Workshop não existe ou não foi encontrado', 404);
     }
-    return workshop;
+
+    await this.workshopsRepository.delete(id);
   }
 }
 
