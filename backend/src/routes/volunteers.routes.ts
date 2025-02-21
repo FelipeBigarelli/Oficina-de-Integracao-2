@@ -16,7 +16,7 @@ volunteersRoutes.post(
   createVolunteerController.handle
 );
 
-volunteersRoutes.get(
+volunteersRoutes.post(
   '/certificate',
   ensureAuthenticated,
   ensureAdmin,

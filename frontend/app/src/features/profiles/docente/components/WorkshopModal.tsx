@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { WarningModal } from "../../components/WarningModal"; // Importe o WarningModal
+import { WarningModal } from "../../components/WarningModal";
 import { Workshop, WorkshopService } from "../services/WorkshopService";
 
 interface WorkshopModalProps {
@@ -30,6 +30,8 @@ export function WorkshopModal({
     type: "success" as "success" | "error",
   });
 
+  const [shouldCloseModal, setShouldCloseModal] = useState(false);
+
   useEffect(() => {
     if (workshopToEdit) {
       setFormData({
@@ -48,8 +50,6 @@ export function WorkshopModal({
     }
   }, [workshopToEdit]);
 
-  if (!isOpen) return null;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -66,12 +66,23 @@ export function WorkshopModal({
           workshopData
         );
         onUpdate(updatedWorkshop);
+        setWarningModal({
+          isOpen: true,
+          message: "Workshop atualizado com sucesso!",
+          type: "success",
+        });
       } else {
         const newWorkshop = await WorkshopService.create(workshopData);
         onCreate(newWorkshop);
+        setWarningModal({
+          isOpen: true,
+          message: "Workshop criado com sucesso!",
+          type: "success",
+        });
       }
 
-      onClose();
+      // Ativar o fechamento do modal principal quando o WarningModal for fechado
+      setShouldCloseModal(true);
     } catch (error) {
       setWarningModal({
         isOpen: true,
@@ -80,6 +91,18 @@ export function WorkshopModal({
       });
     }
   };
+
+  const handleWarningModalClose = () => {
+    setWarningModal({ ...warningModal, isOpen: false });
+
+    // Só fecha o WorkshopModal se o submit foi bem-sucedido
+    if (shouldCloseModal) {
+      onClose();
+      setShouldCloseModal(false);
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <>
@@ -181,7 +204,7 @@ export function WorkshopModal({
 
       <WarningModal
         isOpen={warningModal.isOpen}
-        onClose={() => setWarningModal({ ...warningModal, isOpen: false })}
+        onClose={handleWarningModalClose}
         message={warningModal.message}
         type={warningModal.type}
       />

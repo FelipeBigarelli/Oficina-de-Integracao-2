@@ -1,79 +1,30 @@
 import { PlusIcon } from "@heroicons/react/16/solid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { WarningModal } from "../../components/WarningModal"; // Importe o WarningModal
 import { WorkshopCard } from "../../components/WorkshopCard";
 import { WorkshopModal } from "../components/WorkshopModal";
-import { Workshop, WorkshopService } from "../services/WorkshopService";
+import { useWorkshops } from "../hooks/useWorkshops";
+import { Workshop } from "../services/WorkshopService";
 
 export function DocenteWorkshops() {
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const { workshops, handleDelete, handleCreateSuccess, handleUpdateSuccess } = useWorkshops();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workshopToEdit, setWorkshopToEdit] = useState<Workshop | null>(null);
-  const [error, setError] = useState("");
   const [warningModal, setWarningModal] = useState({
     isOpen: false,
     message: "",
     type: "success" as "success" | "error",
   });
 
-  useEffect(() => {
-    const loadWorkshops = async () => {
-      try {
-        const data = await WorkshopService.getAll();
-        setWorkshops(data);
-      } catch (err) {
-        setError("Erro ao carregar workshops");
-      }
-    };
-
-    loadWorkshops();
-  }, []);
-
-  const handleDelete = async (id: number) => {
-    try {
-      await WorkshopService.delete(id);
-      setWorkshops((prev) => prev.filter((w) => w.id !== id));
-      setWarningModal({
-        isOpen: true,
-        message: "Workshop excluído com sucesso!",
-        type: "success",
-      });
-    } catch (err) {
-      setWarningModal({
-        isOpen: true,
-        message: "Erro ao excluir workshop",
-        type: "error",
-      });
-    }
-  };
-
-  const handleEdit = (workshop: Workshop) => {
-    setWorkshopToEdit(workshop);
-    setIsModalOpen(true);
-  };
-
-  const handleCreateSuccess = (newWorkshop: Workshop) => {
-    setWorkshops((prev) => [...prev, newWorkshop]);
-    setIsModalOpen(false);
+  const handleDeleteWorkshop = async (id: number) => {
+    const result = await handleDelete(id);
     setWarningModal({
       isOpen: true,
-      message: "Workshop criado com sucesso!",
-      type: "success",
+      message: result.message,
+      type: result.success ? "success" : "error",
     });
   };
-
-  const handleUpdateSuccess = (updatedWorkshop: Workshop) => {
-    setWorkshops((prev) =>
-      prev.map((w) => (w.id === updatedWorkshop.id ? updatedWorkshop : w))
-    );
-    setIsModalOpen(false);
-    setWorkshopToEdit(null);
-    setWarningModal({
-      isOpen: true,
-      message: "Workshop atualizado com sucesso!",
-      type: "success",
-    });
-  };
+  
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -118,8 +69,11 @@ export function DocenteWorkshops() {
             date={new Date(workshop.date).toLocaleDateString()}
             duration={`${workshop.duration} horas`}
             description={workshop.description}
-            onEdit={() => handleEdit(workshop)}
-            onDelete={() => handleDelete(workshop.id)}
+            onEdit={() => {
+              setWorkshopToEdit(workshop);
+              setIsModalOpen(true);
+            }}
+            onDelete={() => handleDeleteWorkshop(workshop.id)}
           />
         ))}
       </div>

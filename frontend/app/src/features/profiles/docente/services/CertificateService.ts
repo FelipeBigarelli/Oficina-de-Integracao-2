@@ -1,13 +1,13 @@
 const API_URL = "http://localhost:3333";
 const TOKEN_KEY = "authToken";
 
-import { getUserId } from "../../../auth/services/Authentication";
 
 interface CertificateResponse {
   certificate_url: string;
 }
 
 interface WorkshopInscrito {
+  id_usuario: string;      // Novo campo para o id do usuário
   nome_usuario: string;
   id_workshop: string;
   nome_workshop: string;
@@ -46,22 +46,35 @@ const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
 };
 
 export const CertificateService = {
-  async emitirCertificado(workshopId: string): Promise<CertificateResponse> {
-    const endpoint = `/volunteers/certificate/${workshopId}`;
-
+  async emitirCertificado(workshopId: string, userId: string): Promise<CertificateResponse> {
+    const endpoint = "/volunteers/certificate";
+  
+    const requestBody = {
+      user_id: userId,
+      workshop_id: workshopId,
+    };
+  
     const response = await fetchApi(endpoint, {
-      method: "GET",
+      method: "POST",
+      body: JSON.stringify(requestBody),
     });
+  
+    // Se a rota não existe ou retornar erro, fetchApi lançará uma exceção.
+    const text = await response.text();
+    console.log("Resposta do servidor:", text);
+  
+    // Tente dar parse no text somente se tiver certeza que é JSON
+    // Se for um JSON de verdade, faça:
+    try {
+      const data = JSON.parse(text);
+      return { certificate_url: data.certificate_url };
+    } catch (err) {
+      throw new Error("Não foi possível parsear a resposta como JSON. Resposta: " + text);
+    }
+  }
+  ,
 
-    // Parse the response as text, not JSON
-    const result = await response.text();
-    console.log("Certificate URL:", result); // Log the certificate URL
-
-    // Return the URL as a string
-    return { certificate_url: result };
-  },
   async listarCertificados(): Promise<WorkshopInscrito[]> {
-    const id = getUserId();
 
     const queryRequest: QueryRequest = {
       query:
