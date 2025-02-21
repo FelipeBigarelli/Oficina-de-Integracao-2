@@ -31,7 +31,8 @@ import { CertificateService } from "../services/CertificateService";
                 userId: item.id_usuario,
                 aluno: item.nome_usuario,
                 workshop: item.nome_workshop,
-                data: new Date(item.data_workshop).toLocaleDateString(),
+                // Dentro do map no useEffect:
+data:           new Date(item.data_workshop).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
                 duracao: item.duracao_workshop,
             }))
             );
