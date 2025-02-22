@@ -1,7 +1,7 @@
 import { WarningModal } from "../../components/WarningModal"; // Importe o WarningModal
 import { WorkshopCard } from "../../components/WorkshopCard";
+import { useWorkshops } from "../../docente/hooks/useWorkshops";
 import { useWorkshopRegistration } from "../hooks/useWorkshopRegistration";
-import { useWorkshops } from "../hooks/useWorkshops";
 
 export function VoluntarioWorkshops() {
   const { workshops, error } = useWorkshops();

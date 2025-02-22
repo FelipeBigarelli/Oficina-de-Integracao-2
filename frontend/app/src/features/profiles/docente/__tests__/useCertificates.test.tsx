@@ -26,7 +26,7 @@ describe("useCertificates", () => {
     jest.clearAllMocks();
   });
 
-  it("fetches certificates correctly", async () => {
+  it("busca certificados corretamente", async () => {
     // Configurar mock com data UTC
     const mockData = [{
       id_workshop: "1",
@@ -57,7 +57,7 @@ describe("useCertificates", () => {
     }]);
   });
 
-  it("issues a certificate correctly", async () => {
+  it("emite um certificado corretamente", async () => {
     const mockResponse = { certificate_url: "http://localhost:3333/certificate/123" };
     mockEmitirCertificado.mockResolvedValue(mockResponse as never);
 
@@ -71,7 +71,7 @@ describe("useCertificates", () => {
     expect(result.current.modalMessage).toMatch(/sucesso/);
   });
 
-  it("closes the modal and opens the certificate link", async () => {
+  it("fecha o modal e abre o link do certificado", async () => {
     const mockUrl = "https://example.com/certificate";
     mockEmitirCertificado.mockResolvedValue({ certificate_url: mockUrl } as never);
 

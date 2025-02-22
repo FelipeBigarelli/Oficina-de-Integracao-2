@@ -3,22 +3,21 @@ import { render, screen } from "@testing-library/react";
 import { useWorkshops } from "../hooks/useWorkshops";
 import { DocenteWorkshops } from "../pages/DocenteWorkshops";
 
-
-// Mock necessary hooks and components
+// Mockar hooks e componentes necessários
 jest.mock("../hooks/useWorkshops", () => ({
   useWorkshops: jest.fn(),
 }));
 
 jest.mock("../../components/WorkshopCard", () => ({
-  WorkshopCard: jest.fn(() => <div>Workshop Card</div>),
+  WorkshopCard: jest.fn(() => <div>Cartão de Workshop</div>),
 }));
 
 jest.mock("../../components/WarningModal", () => ({
-  WarningModal: jest.fn(() => <div>Warning Modal</div>),
+  WarningModal: jest.fn(() => <div>Modal de Aviso</div>),
 }));
 
 jest.mock("../components/WorkshopModal", () => ({
-  WorkshopModal: jest.fn(() => <div>Workshop Modal</div>),
+  WorkshopModal: jest.fn(() => <div>Modal de Workshop</div>),
 }));
 
 describe("DocenteWorkshops", () => {
@@ -35,10 +34,10 @@ describe("DocenteWorkshops", () => {
     });
   });
 
-  it("renders the component and displays workshop cards", async () => {
+  it("renderiza o componente e exibe os cartões de workshop", async () => {
     render(<DocenteWorkshops />);
     expect(screen.getByText("Gerenciar Workshops")).toBeDefined();
     expect(screen.getByText("Novo Workshop")).toBeDefined();
-    expect(screen.queryByText("Workshop Card")).toBeDefined();
+    expect(screen.queryByText("Cartão de Workshop")).toBeDefined();
   });
 });
