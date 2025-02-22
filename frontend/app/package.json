@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npx cypress open",
-    "test-components": "jest",
+    "test-components": "jest --config jest.config.ts",
     "cypress:headless": "npx cypress run --browser chrome"
   },
   "dependencies": {
@@ -23,7 +23,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "mock-local-storage": "^1.1.24",
     "msw": "^2.7.1",
-    "nock": "^14.0.1",
     "ntl": "^5.1.0",
     "react": "^18.x.x",
     "react-dom": "^18.x.x",

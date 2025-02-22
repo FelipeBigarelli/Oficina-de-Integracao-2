@@ -11,6 +11,6 @@ Para testes:
 yarn test
 clique em E2E Testing
 
-para testar os componentes:
-yarn test-components --config jest.config.ts
+para testar os componentes e requisições:
+yarn test-components
 ```
